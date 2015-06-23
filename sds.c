@@ -135,11 +135,11 @@ sds sdsMakeRoomFor(sds s, size_t addlen) {
     len = sdslen(s);
     sh = (void*) (s-sizeof *sh);;
     newlen = (len+addlen);
-    if (newlen < SDS_MAX_PREALLOC)
-        newlen *= 2;
+    if (newlen < SDS_MAX_PREALLOC) // 1M
+        newlen *= 2;    // power * 2
     else
-        newlen += SDS_MAX_PREALLOC;
-    newsh = realloc(sh, sizeof *newsh+newlen+1);
+        newlen += SDS_MAX_PREALLOC;  // increase by 1M
+    newsh = realloc(sh, sizeof *newsh+newlen+1);  // the begin of the address
     if (newsh == NULL) return NULL;
 
     newsh->free = newlen - len;
@@ -359,12 +359,12 @@ void sdstrim(sds s, const char *cset) {
 
     sp = start = s;
     ep = end = s+sdslen(s)-1;
-    while(sp <= end && strchr(cset, *sp)) sp++;
+    while(sp <= end && strchr(cset, *sp)) sp++;  // extern char *strchr(const char *s,char c);查找字符串s中首次出现字符c的位置。
     while(ep > start && strchr(cset, *ep)) ep--;
     len = (sp > ep) ? 0 : ((ep-sp)+1);
     if (sh->buf != sp) memmove(sh->buf, sp, len);
     sh->buf[len] = '\0';
-    sh->free = sh->free+(sh->len-len);
+    sh->free = sh->free+(sh->len-len);   // 修改值的先后顺序
     sh->len = len;
 }
 
