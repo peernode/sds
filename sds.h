@@ -41,7 +41,7 @@ typedef char *sds;
 struct sdshdr {
     int len;
     int free;
-    char buf[];
+    char buf[];  //用于构造连续的内存空间
 };
 
 static inline size_t sdslen(const sds s) {
